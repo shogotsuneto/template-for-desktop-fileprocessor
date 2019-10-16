@@ -1,5 +1,5 @@
 {
-  "name": "simple-file-processor",
+  "name": "template-for-desktop-fileprocessor",
   "version": "1.0.0",
   "description": "simple file processing desktop interface",
   "main": "index.js",
@@ -13,6 +13,7 @@
     "electron": "^6.0.12"
   },
   "dependencies": {
+    "electron-dl": "^1.14.0",
     "server": "file:server"
   }
 }

@@ -1,19 +1,13 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
+const { download } = require('electron-dl');
 const server = require('server')
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
 let win
 let port
 
-(() => {
-  const listener = server.listen(0, () => {
-    port = listener.address().port
-  })
-})()
-
 ipcMain.on('file', (event, {name, path}) => {
   console.log(name, path, port)
+  download(win, `http://127.0.0.1:${port}/?path=${encodeURIComponent(path)}`, { filename: `${name}.txt`})
 })
 
 function createWindow () {
@@ -38,12 +32,13 @@ function createWindow () {
   })
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+app.on('ready', () => {
+  const listener = server.listen(0, () => {
+    port = listener.address().port
+    createWindow()
+  })
+})
 
-// Quit when all windows are closed.
 app.on('window-all-closed', () => {
   app.quit()
 })
