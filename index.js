@@ -1,11 +1,19 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
+const server = require('server')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win
+let port
+
+(() => {
+  const listener = server.listen(0, () => {
+    port = listener.address().port
+  })
+})()
 
 ipcMain.on('file', (event, {name, path}) => {
-  console.log(name, path)
+  console.log(name, path, port)
 })
 
 function createWindow () {
