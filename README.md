@@ -1,6 +1,6 @@
 # Desktop file-processor template
 
-An electron template for simple drag & drop & download interface.
+An electron template with simple drag & drop & download interface.
 File processing will be executed on express server.
 
 plan:
