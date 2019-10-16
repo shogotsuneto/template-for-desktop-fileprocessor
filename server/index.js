@@ -7,8 +7,9 @@ const app = express()
 app.get('/', function (req, res) {
   const { path } = req.query
   fs.readFile(path, (err, data) => {
-    if (err) return console.error(err)
-    res.send(data)
+    if (err) return res.status(400).send(err)
+    // res.send(data)
+    res.status(400).send(err)
   })
 })
 

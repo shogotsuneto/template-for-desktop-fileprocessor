@@ -10,6 +10,30 @@ ipcMain.on('file', (event, {name, path}) => {
   download(win, `http://127.0.0.1:${port}/?path=${encodeURIComponent(path)}`, { filename: `${name}.txt`})
 })
 
+const listenWillDownload = win => {
+  win.webContents.session.on('will-download', (event, item, webContents) => {
+    item.on('updated', (event, state) => {
+      if (state === 'interrupted') {
+        item.cancel()
+        console.log('Download is canceled')
+      } else if (state === 'progressing') {
+        if (item.isPaused()) {
+          console.log('Download is paused')
+        } else {
+          console.log(`Received bytes: ${item.getReceivedBytes()}`)
+        }
+      }
+    })
+    item.once('done', (event, state) => {
+      if (state === 'completed') {
+        console.log('Download successfully')
+      } else {
+        console.log(`Download failed: ${state}`)
+      }
+    })
+  })
+}
+
 function createWindow () {
   // Create the browser window.
   win = new BrowserWindow({
@@ -36,6 +60,7 @@ app.on('ready', () => {
   const listener = server.listen(0, () => {
     port = listener.address().port
     createWindow()
+    listenWillDownload(win)
   })
 })
 
