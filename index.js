@@ -1,21 +1,19 @@
+const path = require('path')
 const { app, BrowserWindow, ipcMain } = require('electron')
-const { download } = require('electron-dl');
 const server = require('server')
 
 let win
 let port
 
-ipcMain.on('file', (event, {name, path}) => {
-  console.log(name, path, port)
-  download(win, `http://127.0.0.1:${port}/?path=${encodeURIComponent(path)}`, { filename: `${name}.txt`})
+ipcMain.on('rendererLoad', () => {
+  win.webContents.send('port', port)
 })
 
 const listenWillDownload = win => {
   win.webContents.session.on('will-download', (event, item, webContents) => {
     item.on('updated', (event, state) => {
       if (state === 'interrupted') {
-        item.cancel()
-        console.log('Download is canceled')
+        console.log('Download is interrupted')
       } else if (state === 'progressing') {
         if (item.isPaused()) {
           console.log('Download is paused')
